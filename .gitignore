@@ -1,0 +1,10 @@
+# Python generated files
+*.pyc
+*.egg-info/
+build/
+
+# Windows thumbnail db
+Thumbs.db
+
+# OSX files
+.DS_Store

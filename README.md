@@ -1,24 +1,60 @@
-# AutoLabel
-This is a repository for AutoLabel - a system for automatically labeling network requests with
-the libraries responsible for generating them. For an overview of the project, please visit the
-project [website](http://athinagroup.eng.uci.edu/projects/autolabel/).
+# NoMoATS
+This is the main repository for NoMoATS - a system that automatically explores Android apps,
+collects network traces, and labels the collected network requests with the advertising/tracking (A&T) 
+libraries responsible for generating them. For a deeper overview of the project, please visit the
+project [website](http://athinagroup.eng.uci.edu/projects/nomoads/).
 
+NoMoATS consists of several components that are split among several GitHub repositories.
+You can use these components together, or in isolation, depending on 
+whether or not you want to collect your own data. Use the guide below to help you select where to start:
 
-AutoLabel consists of several components, which you can use together,
-or in isolation, depending on whether or not you already have some data.
-These components are described in separate Sections of this document, and
-are outlined below:
+* If you just want to use the NoMoATS dataset and apply our machine learning (ML) approach,
+go directly to our ML repo - [NoMoAds](https://github.com/UCI-Networking-Group/nomoads).
+* If you have some APK files (Android apps) for which you want to collect network traffic and have it
+labeled, go to the [Running NoMoATS](#running-nomoats) section.
+    - **Note:** *this component requires a rooted Android device.*
+* If you need to download APK files, you are welcome to use our download scripts, located in our
+[download_apks repo](#https://github.com/nshuba/download_apks). 
+Then, start at the [Running NoMoATS](#running-nomoats) section.
+    - **Note:** *this component requires a Google Play account.*
+    
+## Citing NoMoATS
+If you create a publication (including web pages, papers published by a
+third party, and publicly available presentations) using NoMoATS or the
+NoMoATS dataset, please cite the
+corresponding paper
+as follows:
 
-1. [Downloading APKs from the Google Play Store](#1-downloading-apks-from-the-google-play-store)
-2. [Capturing Network Traffic with Stack Traces](#2-capturing-network-traffic-with-stack-traces)
-3. [Labeling Captured Network Traces](#3-labeling-captured-network-traces)
+```
+@article{shuba2020nomoats,
+  title={{NoMoATS: Towards Automatic Detection of Mobile Tracking}},
+  author={Shuba, Anastasia and Markopoulou, Athina},
+  journal={Proceedings on Privacy Enhancing Technologies},
+  volume={2020},
+  number={2},
+  year={2020},
+  publisher={De Gruyter Open}
+}
+```
 
-For the rest of the document we will refer to the directory to which you have cloned the AutoLabel
+We also encourage you to provide us (<nomoads.uci@gmail.com>) with a
+link to your publication. We use this information in reports to our
+funding agencies.
+
+## Running NoMoATS
+**Note**: *the documentation that follows is still a work-in-progress.*
+
+The NoMoATS system in this repository is further split among two main components:
+
+* [Capturing Network Traffic with Stack Traces](#capturing-network-traffic-with-stack-traces)
+* [Labeling Captured Network Traces](#labeling-captured-network-traces)
+
+For the rest of the document we will refer to the directory to which you have cloned the NoMoATS
 repo as `<AUTO_LABEL_ROOT>`.
 
-If you already have APK files and want to run the full AutoLabel,
-complete the prerequisites in Sections 2 and 3, and then you can simply
-use the `<AUTO_LABEL_ROOT>/scripts/data_prep/driver.py` script to
+NoMoATS provides a script to automate both components. Once you have your APK files,
+complete the prerequisites in Sections 2 and 3, and then simply
+use the `<AUTO_LABEL_ROOT>/data_collection/driver.py` script to
 explore apps, capture traces, and label them. Documentation for this
 script is available via:
 ```
@@ -26,22 +62,12 @@ $ cd <AUTO_LABEL_ROOT>/scripts/data_prep/
 $ python2.7 driver.py -h
 ```
 
-**Operating System Requirement**: AutoLabel has been tested on Ubuntu 18, but it's possible that it
+**Operating System Requirement**: NoMoATS has been tested on Ubuntu 18, but it's possible that it
 may work on other operating systems.
 
-
-
-### License
-AutoLabel is licensed under
-[GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
-
-## 1. Downloading APKs from the Google Play Store
-See the [README](scripts/prep_apks/README.md) in the
-`<AUTO_LABEL_ROOT>/scripts/prep_apks/` directory.
-
-## 2. Capturing Network Traffic with Stack Traces
-### Prerequisites
-#### Preparing your Ubuntu Environment
+### Capturing Network Traffic with Stack Traces
+#### Prerequisites
+##### Preparing your Ubuntu Environment
 * Python 2.7
 * Android Development Tools:
   ```
@@ -54,7 +80,7 @@ See the [README](scripts/prep_apks/README.md) in the
   ```
 
 * We will refer to the DroidBot directory to which you cloned as `<DROIDBOT>`.
-Now apply the AutoLabel patch, and install DroidBot, which will also install
+Now apply the NoMoATS patch, and install DroidBot, which will also install
 Frida. *Note*: you may want to run `pip install` with `sudo`.
   ```
   $ cd <DROIDBOT>
@@ -86,7 +112,6 @@ For example, your home directory. We will refer to this directory as
   ```
 
 That's it!
-
 
 #### Preparing your Android Device
 Frida also requires a few more steps to prepare your device:
@@ -144,7 +169,7 @@ device (e.g. `com.android.browser`) and type the following:
     ```
 If you see output similar to above, then your device is ready!
 
-### Running
+#### Running
 * First, disable IPv6 (if you are on a network that supports it):
     ```
    $ adb shell
@@ -162,9 +187,9 @@ Note that in our experiments we ran DroidBot with more tuned parameters.
 See `<AUTO_LABEL_ROOT>/scripts/data_prep/driver.py` for the exact parameters.
 And use the `droibot -h` command to learn more.
 
-## 3. Labeling Captured Network Traces
-### Prerequisites
-#### LibRadar
+### Labeling Captured Network Traces
+#### Prerequisites
+##### LibRadar
 There are two versions of LibRadar that you can use:
 * [LibRadar](https://github.com/pkumza/LiteRadar)
 * [LibRadar++](http://market.orangeapk.com/) - an updated version of LibRadar. At the time of
@@ -179,7 +204,7 @@ writing, these scripts were at the following locations:
 
 For the rest of the document, we will refer to either of those scripts as `<libradar.py>`
 
-#### Others
+##### Others
 * Tshark:
   ```
   $ sudo apt-get install tshark
@@ -189,7 +214,7 @@ the one provided by LibRadar. Download it from
 [here](https://github.com/pkumza/LiteRadar/blob/master/LiteRadar/Data/tag_rules.csv).
 We will refer to this file as `<tag_rules.csv>` for the rest of the document.
 
-### Running
+#### Running
 In this Section we assume that you already have some data captured
 (e.g. from [Section 2](#2-capturing-network-traffic-with-stack-traces))
 for a particular app. We also assume that you have that app's APK.

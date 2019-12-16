@@ -3,6 +3,9 @@
 *.egg-info/
 build/
 
+# PyCharm
+.idea
+
 # Windows thumbnail db
 Thumbs.db
 

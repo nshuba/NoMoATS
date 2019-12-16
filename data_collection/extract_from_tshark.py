@@ -14,9 +14,8 @@ from sets import Set
 from urlparse import urlsplit
 from collections import OrderedDict
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + os.sep + "..")
-from utils.pii_helper import PIIHelper
-from utils import utils, json_keys
+from pii_helper import PIIHelper
+import json_keys
 
 # Prepare PII helper
 pii_helper = PIIHelper(json_keys.PII_VALUES, json_keys.LOCATION_PII)

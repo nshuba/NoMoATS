@@ -9,7 +9,7 @@ You can use these components together, or in isolation, depending on
 whether or not you want to collect your own data. Use the guide below to help you select where to start:
 
 * If you just want to use the NoMoATS dataset and apply our machine learning (ML) approach,
-go directly to our ML repo - [NoMoAds](https://github.com/UCI-Networking-Group/nomoads).
+go directly to our ML repo - [NoMoAds](https://github.com/nshuba/nomoads).
 * If you have some APK files (Android apps) for which you want to collect network traffic and have it
 labeled, go to the [Running NoMoATS](#running-nomoats) section.
     - **Note:** *this component requires a rooted Android device.*

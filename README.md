@@ -14,7 +14,7 @@ go directly to our ML repo - [NoMoAds](https://github.com/nshuba/nomoads).
 labeled, go to the [Running NoMoATS](#running-nomoats) section.
     - **Note:** *this component requires a rooted Android device.*
 * If you need to download APK files, you are welcome to use our download scripts, located in our
-[download_apks repo](#https://github.com/nshuba/download_apks). 
+[download_apks repo](https://github.com/nshuba/download_apks).
 Then, start at the [Running NoMoATS](#running-nomoats) section.
     - **Note:** *this component requires a Google Play account.*
     

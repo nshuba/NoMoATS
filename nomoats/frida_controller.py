@@ -45,12 +45,12 @@ class FridaController(object):
     BASE_HEX = 16
     
     # JS msg types
-    TYPE_STOP = "stop";
-    TYPE_INFO = "info";
-    TYPE_LIB  = "lib";
-    TYPE_DATA = "data";
-    TYPE_WEB_LOAD = "web_load";
-    TYPE_WEB_INTC = "web_intc";
+    TYPE_STOP = "stop"
+    TYPE_INFO = "info"
+    TYPE_LIB  = "lib"
+    TYPE_DATA = "data"
+    TYPE_WEB_LOAD = "web_load"
+    TYPE_WEB_INTC = "web_intc"
 
     def __init__(self, output_dir, package_name):      
         self.enabled = True
@@ -125,8 +125,8 @@ class FridaController(object):
         """
         Injects the Frida agent JavaScript into the app session
         """
-        dir_path = os.path.dirname(os.path.realpath(__file__))            
-        script = os.path.join(dir_path, "frida_agent.js")
+        import pkg_resources
+        script = pkg_resources.resource_filename("nomoats", "resources/nomoats_agent.js")
         with open(script, mode="rb") as f:
             js = f.read().decode("UTF-8")
             script = session.create_script(js)

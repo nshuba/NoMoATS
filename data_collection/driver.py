@@ -44,7 +44,7 @@ if __name__ == '__main__':
     args = ap.parse_args()
     
     parent_dir = os.path.dirname(os.path.abspath(args.apps_dir))
-    libradar_dir = os.path.join(parent_dir, 'libradarplus_output')
+    libradar_dir = os.path.join(parent_dir, 'libradar_output')
     if not os.path.isdir(libradar_dir):
         os.makedirs(libradar_dir)
                 
@@ -71,7 +71,7 @@ if __name__ == '__main__':
             break
             
         # Droidbot will make the dir if necessary
-        droidbot_dir = os.path.join(parent_dir, 'droidbot_output')
+        droidbot_dir = os.path.join(parent_dir, 'nomoats_output')
         droidbot_app_dir = os.path.join(droidbot_dir, pkg_name)
         pcap_path = os.path.join(droidbot_app_dir, pkg_name + ".pcapng")
         if not os.path.isfile(pcap_path):

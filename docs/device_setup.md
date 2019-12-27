@@ -5,6 +5,12 @@ AutoLabel paper. We used a **Nexus 6** device with **Android 7.1**. How to
 mimic the Android 7.1 installation that we performed and our rooting
 process is explained below.
 
+### Prerequisites
+* Android Development Tools:
+  ```
+  $ sudo apt-get install android-tools-adb android-tools-fastboot
+  ```
+
 ### Preparing the OS
 #### Flashing Android 7.1
 First, allow OEM unlocking:

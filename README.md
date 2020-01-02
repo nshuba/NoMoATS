@@ -95,6 +95,7 @@ an updated version of LibRadar.
 with some modifications. You can setup our modified version of DroidBot as follows:
   ```
   $ git clone https://github.com/nshuba/droidbot
+  $ cd droidbot
   $ git checkout nomoats
   $ pip install -e .
   ```
@@ -129,7 +130,7 @@ Frida also requires a few more steps to prepare your device:
      root@shamu:/data/local/tmp # chmod 755 enable_ipv6.sh
      ```
 * NoMoATS uses Frida version 12.2.6, so you have to download the corresponding Frida server for your device
-from [here](#https://github.com/frida/frida/releases/tag/12.2.6). For example, if you are using
+from [here](https://github.com/frida/frida/releases/tag/12.2.6). For example, if you are using
 an ARM device, you can download the corresponding Frida server as follows:
    ```
    $ wget https://github.com/frida/frida/releases/download/12.2.26/frida-server-12.2.26-android-arm.xz

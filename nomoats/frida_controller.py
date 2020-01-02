@@ -84,8 +84,13 @@ class FridaController(object):
         
         # Prepare basic tcp header
         self.tcp_header = frida_net_layers.create_tcp_header()
+
         self.frida_device = frida.get_usb_device()
-        self.frida_device.on('process-crashed', self.on_process_crashed)
+        try:
+            self.frida_device.on('process-crashed', self.on_process_crashed)
+        except Exception:
+            print "WARNING: Device does not have a 'process-crashed' signal. If you are using an emulator, consider" \
+                  "switching to a real device for more robustness."
         
         self.start_app_lock = Lock()
         self.app_pid = -1

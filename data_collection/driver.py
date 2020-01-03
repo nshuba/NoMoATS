@@ -21,6 +21,9 @@ import os
 import subprocess
 import json
 
+from libradar_parser import LibRadarParserFactory
+import extract_from_tshark
+
 def readable_dir(prospective_dir):
     if not os.path.isdir(prospective_dir):
         raise Exception("readable_dir:{0} is not a valid path".format(prospective_dir))
@@ -39,7 +42,7 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser(description='Analyze apps')
     ap.add_argument('apps_dir', type=readable_dir, help='directory containing apks')
     ap.add_argument('libradar', help='LibRadar Python script location')
-    ap.add_argument('libradar_csv', help='LibRadar CSV file containing tag rules')
+    ap.add_argument('--libradar_csv', help='LibRadar CSV file containing tag rules, indicates use of LibRadar++')
 
     args = ap.parse_args()
     
@@ -59,8 +62,9 @@ if __name__ == '__main__':
         
         ret = 0
         if not os.path.isfile(anal_file_path):
+            # TODO: Python version dependent on libradar version
             with open(anal_file_path, "w") as anal_file:
-                proc = subprocess.Popen(['python3.7', args.libradar, apk_path],
+                proc = subprocess.Popen(['python', args.libradar, apk_path],
                     stdout=anal_file, stderr=subprocess.PIPE)
             ret = proc.wait()
             print "\tLibRadar Done: " + str(ret)
@@ -103,14 +107,12 @@ if __name__ == '__main__':
         
         webview_path = os.path.join(droidbot_app_dir, "webview_loads.json")
         extracted_file = os.path.join(extracted_dir, pkg_name + ".json")
+        libradar_parser = LibRadarParserFactory.create_parser(args.libradar_csv)
         if not os.path.isfile(extracted_file):
-            ret = subprocess.call(["python", "extract_from_tshark.py",
-                                    tshark_path, webview_path, anal_file_path,
-                                   args.libradar_csv, extracted_file])
+            if not extract_from_tshark.extract(tshark_path, webview_path, anal_file_path, libradar_parser,
+                                               extracted_file):
+                break
             print "\tExtraction Done: " + str(ret)
             #break
         else:
              print "\tSkipping extraction - already exists"
-             
-        if not check_ret(ret):
-            break

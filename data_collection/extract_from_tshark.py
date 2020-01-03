@@ -22,7 +22,7 @@ tshark from PCAPNG format
 #  along with NoMoATS.  If not, see <http://www.gnu.org/licenses/>.
 
 import os, sys
-import json, csv
+import json
 import uuid
 import argparse
 
@@ -35,8 +35,6 @@ import json_keys
 
 # Prepare PII helper
 pii_helper = PIIHelper(json_keys.PII_VALUES, json_keys.LOCATION_PII)
-
-ats_types = ["Advertisement", "Mobile Analytics"]
 
 def make_unique(key, dct):
     counter = 0
@@ -73,54 +71,6 @@ def check_ats(trace, ats_pkgs, packet):
     #     at java.lang.Thread.run(Thread.java:761)
 
     packet[json_keys.ats_label] = 0
-
-# TODO: this should be run outside of this script to avoid running it for every file
-def parse_literadar_csv(csv_file):
-    all_ats_pkgs = Set()
-    with open(csv_file, 'rb') as f:
-        reader = csv.reader(f, delimiter=',')
-
-        # Get headers
-        header_row = reader.next()
-        for row in reader:
-            pkg = row[header_row.index("Package Name")]
-            type = row[header_row.index("Type")]
-            if type in ats_types:
-                all_ats_pkgs.add(pkg)
-
-    #print all_ats_pkgs
-    print "Total packages: " + str(len(all_ats_pkgs))
-    return all_ats_pkgs
-            
-def parse_literadar(literadar_file, global_ats_pkgs):
-    """
-    Parse LiteRadar data
-    """
-    with open(literadar_file) as jf:
-        ats_libs = Set()
-
-        pkg_name_in_apk_idx = 0
-        pkg_name_orig_idx = 1
-
-        for line in jf:
-            split_line = line.split()
-            pkg_name_in_apk = split_line[pkg_name_in_apk_idx]
-            pkg_name_orig = split_line[pkg_name_orig_idx]
-
-            if pkg_name_orig in global_ats_pkgs:
-                # change Lcom/crashlytics/android to com.crashlytics.android
-                pkg = pkg_name_in_apk[1:].replace("/", ".")
-                print "\tFound ATS pkg: " + pkg
-                ats_libs.add(pkg)
-            # Special case for Google:
-            elif pkg_name_orig == "Lcom/google/android/gms":
-                # From https://developers.google.com/android/reference/packages
-                ats_libs.add("com.google.android.gms.ads")
-                ats_libs.add("com.google.android.gms.internal.ads")
-                ats_libs.add("com.google.android.gms.analytics")
-
-    print ats_libs
-    return ats_libs
 
 def extract_from_webview(full_path, ats_pkgs, data, pkg_name):
     with open(full_path, "r") as jf:
@@ -289,33 +239,34 @@ def write_data(data, file_out):
         jf.write(json.dumps(data, sort_keys=True, indent=4))
         jf.truncate()
 
-if __name__ == '__main__':
-    ap = argparse.ArgumentParser(description=
-        "Extracts only the needed information from provided JSON packet traces")
-    ap.add_argument('tshark_file', help='JSON file containing data extracted via tshark')
-    ap.add_argument('webview_file', help='JSON file containing webview request data')
-    ap.add_argument('literadar_file', help='LiteRadar analysis file')
-    ap.add_argument('literadar_csv', help='LiteRadar CSV file containing tag rules')
-    ap.add_argument('out_file', help='File to write results to')
 
-    args = ap.parse_args()
-    
-    file_in = args.tshark_file
-    if not os.path.isfile(file_in):
-        print "ERROR: please provide a JSON file as a first argument"
-        sys.exit(1)
+def extract(tshark_file, webview_file, libadar_file, libradar_parser, out_file):
+    """
+    Extracts only the needed information from provided JSON packet traces and labels them
+    :param tshark_file: JSON file containing data extracted via tshark
+    :param webview_file: JSON file containing webview request data
+    :param libadar_file: LibRadar or LibRadar++ analysis file
+    :param libradar_parser: LibRadarParser instance
+    :param out_file: File to write results to
+    :return: True on success, False on failure
+    """
 
-    global_ats_pkgs = parse_literadar_csv(args.literadar_csv)
-    ats_pkgs = parse_literadar(args.literadar_file, global_ats_pkgs)
-        
+    if not os.path.isfile(tshark_file):
+        print "ERROR: invalid argument"
+        return False
+
+    ats_pkgs = libradar_parser.parse(libadar_file)
+
     # Prepare new data structure for re-formatted JSON storage
     data = {}
-    fn = os.path.basename(args.literadar_file)
+    fn = os.path.basename(libadar_file)
     pkg_name = fn[:len(fn) - len(".txt")]
-    
-    extract_from_tshark(file_in, ats_pkgs, data, pkg_name)
-    if os.path.isfile(args.webview_file):
-        extract_from_webview(args.webview_file, ats_pkgs, data, pkg_name)
+
+    extract_from_tshark(tshark_file, ats_pkgs, data, pkg_name)
+    if os.path.isfile(webview_file):
+        extract_from_webview(webview_file, ats_pkgs, data, pkg_name)
     else:
-        print "INFO: no packets were captured"
-    write_data(data, args.out_file)
+        print "INFO: no webivew packets were captured"
+
+    write_data(data, out_file)
+    return True

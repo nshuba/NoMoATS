@@ -11,12 +11,15 @@ whether or not you want to collect your own data. Use the guide below to help yo
 
 * If you just want to use the NoMoATS dataset and apply our machine learning (ML) approach,
 go directly to our ML repo - [NoMoAds](https://github.com/nshuba/nomoads).
+The [NoMoAds](https://github.com/nshuba/nomoads) repo also offers a VM for a quick start.
+* For a **quick start** with NoMoATS, we provide a VM which has all the prerequisites installed. Go to
+the [Quick Start with a VM](#quick-start-with-the-provided-vm) section for instructions on how to use our VM.
 * If you have some APK files (Android apps) for which you want to collect network traffic and have it
-labeled, go to the [Running NoMoATS](#running-nomoats) section.
+labeled, then start at the [Prerequisites](#prerequisites) section and continue to the [Running NoMoATS](#running-nomoats) section.
     - **Note:** *this component requires a rooted Android device.*
 * If you need to download APK files, you are welcome to use our download scripts, located in our
 [download_apks repo](https://github.com/nshuba/download_apks).
-Then, start at the [Running NoMoATS](#running-nomoats) section.
+Then, start at the [Prerequisites](#prerequisites) section and continue to the [Running NoMoATS](#running-nomoats) section.
     - **Note:** *this component requires a Google Play account.*
     
 ## Citing NoMoATS
@@ -195,9 +198,10 @@ the one provided by LibRadar. We downloaded it from
 [here](https://github.com/pkumza/LiteRadar/blob/master/LiteRadar/Data/tag_rules.csv) and included it
 in our repo. You can replace this file with newer versions as they become available.
    
-* The above script will first run LibRadar on your test APKs and then run Droidbot (along with
+### NoMoATS Output
+The `driver.py` script first runs LibRadar on the provided APK(s) and then runs Droidbot (along with
 our Frida scripts that capture traffic). 
-Next, the script will extract and label the collected data and save it in a friendly JSON format.
+Next, the script extracts and labels the collected data and saves it in a friendly JSON format.
 When it's done, your directory structure will look similar to this:
   ```
   --> apks/
@@ -219,12 +223,12 @@ When it's done, your directory structure will look similar to this:
         --> app1.json   (captured and labeled traffic, including WebView traffic)  
         --> ...other apps...     
   ```
-* You can use the files in the `extracted_data` folder to train ML classifiers
+You can use the files in the `extracted_data` folder to train ML classifiers
 using our ML repo - [NoMoAds](https://github.com/nshuba/nomoads). NoMoAds also contains various
 scripts that can help you further analyze the captured data.
 
 ## Acknowledgements
 * [Frida](https://www.frida.re/)
 * [LibRadar](https://github.com/pkumza/LiteRadar)
-* [LibRadar++](http://market.orangeapk.com/)
+* [LibRadar++](https://eprints.networks.imdea.org/1885/1/imc18-final148.pdf)
 * [DroidBot](https://github.com/honeynet/droidbot)

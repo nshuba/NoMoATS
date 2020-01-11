@@ -15,6 +15,7 @@
 #  along with NoMoATS.  If not, see <http://www.gnu.org/licenses/>.
 
 import json, csv
+import subprocess
 
 class LibRadarParserFactory:
     """

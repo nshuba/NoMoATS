@@ -45,9 +45,51 @@ We also encourage you to provide us (<nomoads.uci@gmail.com>) with a
 link to your publication. We use this information in reports to our
 funding agencies.
 
-## Prerequisites
-**Note**: *the documentation that follows is still a work-in-progress.*
+## Quick Start with the Provided VM
+* Download our Ubuntu 18.04 VMWare image from [here](https://drive.google.com/file/d/1txXOo1KiJ5dpOA9ukDFvVeCQ-d1rX9sl/).
+The image has all the prerequisites installed, an Android emulator, and a sample APK to get you started in no time.
+    * **Note**: the image should also work with Virtual Box if you create a new VM within Virtual Box and pick
+    "use existing disk".
+    * **Note on the RAM**: the image comes with the RAM set to 8GB. This is needed to run the Android emulator smoothly.
+If your host machine cannot spare 8GB of RAM, you can decrease the VM's RAM and use an Android device instead of an
+emulator - see Section [Emulator vs. Real Android Device](#emulator-vs-real-android-device) below.
+* Power on the image. Password is `nomoats`
+* First, we will start the Android emulator. Open a terminal and type the following:
+  ```
+  $ cd ~/android-sdk/tools/
+  $ ./emulator -avd Nexus6_API25
+  ```
+* Wait for the emulator to start up. When it's ready, open another terminal window and type the following:
+  ```
+   $ adb shell
+   generic_x86:/ # cd /data/local/tmp
+   generic_x86:/data/local/tmp # ./frida-server &
+  ```
+* Now we are ready to run NoMoATS. Type the following in another terminal window:
+  ```
+  $ cd ~/NoMoATS/data_collection/
+  $ python driver.py ~/test/apks/ ~/LiteRadar/LiteRadar/literadar.py -e
+  ```
+* Be patient as the APK is analyzed and installed. After that it will be automatically exercised for
+five minutes. When the script finishes, skip to the [NoMoATS Output](#nomoats-output) section for
+instructions on how to view the results, which are saved to the `/home/nomoats/test` directory on the VM.
 
+### Emulator vs. Real Android Device
+You can also use our VM with your own Android device, instead of the emulator. See the 
+[Preparing your Android Device](#preparing-your-android-device) section for instruction on how to
+replicate our Android setup. If using your own device, beware of the following:
+* You may need to run `su` after the `adb shell` command to gain root privilege, which is required
+    for running the Frida server
+* Omit the `-e` option when invoking the `driver.py` script
+
+Using a real device is recommended since **the emulator has the following limitations**:
+* Currently, we don't have a script for disabling IPv6 traffic, which is currently not supported by NoMoATS.
+* Currently, we could not find a way to downgrade Google Play services, which breaks how we get the stack trace
+    in certain WebViews.
+* The emulator does not send a process crash signal to Frida, which hinders NoMoATS' ability to restart apps upon a crash
+
+
+## Prerequisites
 **Operating System Requirement**: NoMoATS has been tested on Ubuntu 18, but it's possible that it
 may work on other operating systems.
 
@@ -115,13 +157,14 @@ Frida also requires a few more steps to prepare your device:
 * First, root your device. Instructions vary based on device type.
 [CF-Auto-Root](https://desktop.firmware.mobi/) can be used to root most
  devices.
-  * **If you would like to fully replicate our setup**: see instructions in
+* Although you can use any device and Android version, for best results **we strongly recommend you fully replicate our 
+setup**: by following the instructions provided in
   [device_setup.md](docs/device_setup.md) in the `NoMoATS/docs/`
-  directory.
+  directory. Otherwise, Frida may have issues fetching stack traces in certain cases.
 * Currently, we do not support IPv6, so if you are on a network that supports
  IPv6, we recommend disabling it on your mobile device. Disabling lasts only
  until your device reboots or joins another network. For convenience, we
- packaged two scritps for enabling and disabling IPv6. Push them to your
+ packaged two scripts for enabling and disabling IPv6. Push them to your
  device so you can run them each time you want to capture traffic:
      ```
      $ adb push NoMoATS/scripts/device_prep/disable_ipv6.sh /data/local/tmp

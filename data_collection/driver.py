@@ -39,10 +39,11 @@ def check_ret(ret):
     return True
     
 if __name__ == '__main__':
-    ap = argparse.ArgumentParser(description='Analyze apps')
+    ap = argparse.ArgumentParser(description='Runs the full NoMoATS pipeline')
     ap.add_argument('apps_dir', type=readable_dir, help='directory containing apks')
     ap.add_argument('libradar', help='LibRadar Python script location')
     ap.add_argument('--libradar_csv', help='LibRadar CSV file containing tag rules, indicates use of LibRadar++')
+    ap.add_argument('-e', action='store_true', help='Indicates use of an emulator, false by default')
 
     args = ap.parse_args()
     
@@ -61,12 +62,9 @@ if __name__ == '__main__':
         anal_file_path = os.path.join(libradar_dir, anal_file_name)
         
         ret = 0
+        libradar_parser = LibRadarParserFactory.create_parser(args.libradar_csv)
         if not os.path.isfile(anal_file_path):
-            # TODO: Python version dependent on libradar version
-            with open(anal_file_path, "w") as anal_file:
-                proc = subprocess.Popen(['python', args.libradar, apk_path],
-                    stdout=anal_file, stderr=subprocess.PIPE)
-            ret = proc.wait()
+            ret = libradar_parser.analyze(args.libradar, apk_path, anal_file_path)
             print "\tLibRadar Done: " + str(ret)
         else:
             print "\tSkipping LibRadar - already done"
@@ -79,10 +77,13 @@ if __name__ == '__main__':
         droidbot_app_dir = os.path.join(droidbot_dir, pkg_name)
         pcap_path = os.path.join(droidbot_app_dir, pkg_name + ".pcapng")
         if not os.path.isfile(pcap_path):
-            ret = subprocess.call(["droidbot", "-a", apk_path, "-o", droidbot_app_dir, #"-keep_app",
-                                    "-policy", "bfs_naive", 
+            droidbot_cmd = ["droidbot", "-a", apk_path, "-o", droidbot_app_dir, #"-keep_app",
+                                    "-policy", "bfs_naive",
                                     "-interval", "2",
-                                    "-keep_env", "-grant_perm", "-ignore_ad", "-timeout", "300"])
+                                    "-keep_env", "-grant_perm", "-ignore_ad", "-timeout", "300"]
+            if args.e:
+                droidbot_cmd.append("-is_emulator")
+            ret = subprocess.call(droidbot_cmd)
             print "\tDroidbot Done: " + str(ret)
         else:
             print "\tSkipping Droidbot - already exists"
@@ -107,7 +108,6 @@ if __name__ == '__main__':
         
         webview_path = os.path.join(droidbot_app_dir, "webview_loads.json")
         extracted_file = os.path.join(extracted_dir, pkg_name + ".json")
-        libradar_parser = LibRadarParserFactory.create_parser(args.libradar_csv)
         if not os.path.isfile(extracted_file):
             if not extract_from_tshark.extract(tshark_path, webview_path, anal_file_path, libradar_parser,
                                                extracted_file):

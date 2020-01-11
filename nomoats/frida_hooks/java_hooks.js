@@ -63,7 +63,6 @@ function interceptRequest() {
         customClassFactory.loader = classLoaderToUse;
         const ContentsClientAdapter = customClassFactory.use(classOfInterest);
 
-        // TODO: if app crashes - restart with Frida
         ContentsClientAdapter.shouldInterceptRequest.implementation = function(params) {
             //console.log("shouldInterceptRequest: " + this.mWebViewClient.value);
             

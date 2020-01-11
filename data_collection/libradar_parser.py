@@ -25,7 +25,6 @@ class LibRadarParserFactory:
     def create_parser(cls, literadar_csv_file=None):
         """
         Creates a correct parser instance based on the provided parameters
-        :param libradar_file: LibRadar or LibRadar++ output file
         :param literadar_csv_file: list of advertising and tracking package names (required if using LibRadar++)
         :return: a parser instance
         """
@@ -42,6 +41,22 @@ class LibRadarParser:
     """
     
     ATS_TYPES = ["Advertisement", "Mobile Analytics"]
+
+    def _analyze(self, python_cmd, libradar_path, apk_path, output_file):
+        with open(output_file, "w") as anal_file:
+            proc = subprocess.Popen([python_cmd, libradar_path, apk_path],
+                                    stdout=anal_file, stderr=subprocess.PIPE)
+            return proc.wait()
+
+    def analyze(self, libradar_path, apk_path, output_file):
+        """
+        Analyzes the apk in the provided path and saves the result in the provided output file
+        :param libradar_path: full path to the main LibRadar script
+        :param apk_path: full path to the APK to analyze
+        :param output_file: full path to where to save the analysis results
+        :return: result of Popen.wait(), which indicates success or failure of running LibRadar
+        """
+        return self._analyze('python', libradar_path, apk_path, output_file)
 
     def parse(self, libradar_file):
         """
@@ -82,6 +97,12 @@ class LibRadarParserPlusPlus(LibRadarParser):
 
     def __init__(self, literadar_csv):
         self.global_ats_pkgs = self.parse_literadar_csv(literadar_csv)
+
+    def analyze(self, libradar_path, apk_path, output_file):
+        """
+        parent:
+        """
+        return self._analyze('python3.7', libradar_path, apk_path, output_file)
 
     def parse_literadar_csv(self, csv_file):
         """

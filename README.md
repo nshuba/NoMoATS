@@ -48,6 +48,7 @@ funding agencies.
 ## Quick Start with the Provided VM
 * Download our Ubuntu 18.04 VMWare image from [here](https://drive.google.com/file/d/1txXOo1KiJ5dpOA9ukDFvVeCQ-d1rX9sl/).
 The image has all the prerequisites installed, an Android emulator, and a sample APK to get you started in no time.
+    * **Note for Linux/OS X users**: to unzip the file on a Unix-based system, please use the following command: `$ tar -zxvf NoMoATS_Public_VM.zip` 
     * **Note**: the image should also work with Virtual Box if you create a new VM within Virtual Box and pick
     "use existing disk".
     * **Note on the RAM**: the image comes with the RAM set to 8GB. This is needed to run the Android emulator smoothly.

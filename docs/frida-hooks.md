@@ -1,7 +1,7 @@
 # Frida Hooks
 This folder contains the Frida hooks used by NoMoATS.
 They JavaScript from these two files is compiled into a single file 
-([nomoats_agent.js](nomoats/resources/nomoats_agent.js)) via Node.JS. If you need to change the hooks,
+([nomoats_agent.js](../nomoats/resources/nomoats_agent.js)) via Node.JS. If you need to change the hooks,
 you will need to re-compile the final file with the steps provided below.
 
 ## Compiling Frida Hooks

@@ -46,7 +46,7 @@ link to your publication. We use this information in reports to our
 funding agencies.
 
 ## Quick Start with the Provided VM
-* Download our Ubuntu 18.04 VMWare image from [here](https://drive.google.com/file/d/1rV8R5BeXViYkGBW7811mn9mJ5l2CxOhV/).
+* Download our Ubuntu 18.04 VMWare image from [here](https://ucirvine.sharepoint.com/:u:/s/athinagroup/EVQ4Pj27zp1FklBeteBKzt4B0R8mwqiAmhLNAsc0v0oRGA).
 The image has all the prerequisites installed, an Android emulator, and a sample APK to get you started in no time.
     * **Note**: the image should also work with Virtual Box if you create a new VM within Virtual Box and pick
     "use existing disk".
